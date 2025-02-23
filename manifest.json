@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Extension",
+  "version": "1.0",
+  "description": "A simple extension",
+  "permissions": ["contextMenus", "storage", "commands"],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "commands": {
+    "Ctrl+Q": {
+      "suggested_key": {
+        "default": "Ctrl+Q"
+      },
+      "description": "reload the extension"
+    }
+  },
+  "action": {
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "16": "popup/images/icon.png",
+      "48": "popup/images/icon.png",
+      "128": "popup/images/icon.png"
+    }
+  }
+}
