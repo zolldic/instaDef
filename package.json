@@ -1,0 +1,27 @@
+{
+  "name": "translaterext",
+  "version": "1.0.0",
+  "description": "this extension does two things manily, tranlsate a given text, or explainng a given text It creates two context menus for the user to choose from after selecting the text and right-clicking.",
+  "homepage": "https://github.com/zolldic/instaDef#readme",
+  "bugs": {
+    "url": "https://github.com/zolldic/instaDef/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zolldic/instaDef.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack --watch --config webpack.dev.js"
+  },
+  "devDependencies": {
+    "axios": "^1.7.9",
+    "copy-webpack-plugin": "^12.0.2",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-merge": "^6.0.1"
+  }
+}
