@@ -11,7 +11,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     id: "translate",
     title: "Translate this word",
     type: "normal",
-    documentUrlPatterns: ["file://*"],
+    documentUrlPatterns: ["<all_urls>"],
     contexts: ["selection"],
   });
 
@@ -19,9 +19,20 @@ chrome.runtime.onInstalled.addListener(async () => {
     id: "explain",
     title: "explain this topic",
     type: "normal",
-    documentUrlPatterns: ["file://*"],
+    documentUrlPatterns: ["<all_urls>"],
     contexts: ["selection"],
   });
 });
 
-// chrome.contextMenus.onClicked.addListener(async (info, tab) => {});
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  // send to content script
+
+  const action = "translate";
+
+  await chrome.tabs.query(
+    { active: true, currentWindow: true },
+    async (tabs) => {
+      await chrome.tabs.sendMessage(tabs[0].id, { action });
+    }
+  );
+});
