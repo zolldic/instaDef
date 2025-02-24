@@ -24,14 +24,33 @@ chrome.runtime.onInstalled.addListener(async () => {
     documentUrlPatterns: ["<all_urls>"],
     contexts: ["selection"],
   });
+
+  // inject the content script
+  await chrome.tabs.query(
+    { active: true, currentWindow: true },
+    async function (tabs) {
+      if (tabs[0].url.includes("chrome://")) return undefined;
+
+      await chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        files: ["content.js"],
+      });
+    }
+  );
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  // send to content script
-  const data = {};
+  const data = {
+    tranlsation: null,
+  };
 
   if (info.menuItemId === "translate") {
-    const translation = getTranslation(info.selectionText);
+    try {
+      const translation = await getTranslation(info.selectionText);
+      data.tranlsation = translation;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   if (info.menuItemId === "explain") {
@@ -39,15 +58,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 
   // send the info to content script
-  /* 
-    await chrome.tabs.query(
+  await chrome.tabs.query(
     { active: true, currentWindow: true },
-    async (tabs) => {
-      await chrome.tabs.sendMessage(tabs[0].id, { action });
+    function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { data: data.tranlsation });
     }
   );
-
-  */
 });
 
 /**

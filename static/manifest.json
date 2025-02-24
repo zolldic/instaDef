@@ -3,17 +3,18 @@
   "name": "Extension",
   "version": "1.0",
   "description": "A simple extension",
-  "permissions": ["contextMenus", "storage", "commands", "activeTab", "tabs"],
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "commands",
+    "activeTab",
+    "tabs",
+    "scripting"
+  ],
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ],
   "commands": {
     "Ctrl+Q": {
       "suggested_key": {
