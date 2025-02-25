@@ -4,6 +4,7 @@
 import path from "path";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import { fileURLToPath } from "url";
+import Dotenv from "dotenv-webpack";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,7 +13,6 @@ const config = {
   entry: {
     background: "./background/background.js",
     content: "./content/content.js",
-    // popup: "./src/popup.js",
   },
   resolve: {
     extensions: [".js"],
@@ -26,6 +26,7 @@ const config = {
     new CopyWebpackPlugin({
       patterns: [{ from: "static" }],
     }),
+    new Dotenv(),
   ],
 };
 
