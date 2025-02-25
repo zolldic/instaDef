@@ -1,4 +1,5 @@
 import axios from "axios";
+import "dotenv/config";
 
 chrome.runtime.onInstalled.addListener(async () => {
   // reload the extention automatically.
@@ -40,28 +41,29 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  const data = {
-    tranlsation: null,
-  };
+  let data = null;
 
   if (info.menuItemId === "translate") {
     try {
-      const translation = await getTranslation(info.selectionText);
-      data.tranlsation = translation;
+      data = await getTranslation(info.selectionText);
     } catch (error) {
       console.error(error);
     }
   }
 
   if (info.menuItemId === "explain") {
-    // handle the explain
+    try {
+      data = await getExplaination(info.selectionText);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   // send the info to content script
   await chrome.tabs.query(
     { active: true, currentWindow: true },
     function (tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { data: data.tranlsation });
+      chrome.tabs.sendMessage(tabs[0].id, { data });
     }
   );
 });
@@ -84,10 +86,9 @@ async function getTranslation(selection) {
     method: "POST",
     url: "https://google-translator9.p.rapidapi.com/v2",
     headers: {
-      "x-rapidapi-key": "517bf34bc9msh0a76e8027918c51p16e3f8jsn4f3d35143590",
+      "x-rapidapi-key": process.env.RAPIDAPI_KEY,
       "x-rapidapi-host": "google-translator9.p.rapidapi.com",
       "Content-Type": "application/json",
-      "Accept-Encoding": "br",
     },
     data: {
       q: selection,
@@ -107,6 +108,12 @@ async function getTranslation(selection) {
   }
 }
 
+async function getExplaination(selection) {
+  try {
+  } catch (error) {
+    console.error(error);
+  }
+}
 /**
 async function saveToStorage(key , value): {
     if (value || key) {
