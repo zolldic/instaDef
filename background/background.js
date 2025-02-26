@@ -1,6 +1,6 @@
 import getTranslation from "./translation.js";
 import getExplaination from "./explain.js";
-import { getActiveTab } from "./utility.js";
+import { getActiveTab, errorHandler } from "./utility.js";
 
 chrome.runtime.onInstalled.addListener(async () => {
   // reload the extention automatically.
@@ -51,7 +51,10 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       data = await getTranslation(info.selectionText);
     } catch (error) {
       console.error(error);
-      // handle error gracefully
+      errorHandler({
+        title: "Extension Error",
+        msg: "Failed to send data. Please try again or refresh the page.",
+      });
     }
   }
 
@@ -60,7 +63,10 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
       data = await getExplaination(info.selectionText);
     } catch (error) {
       console.error(error);
-      // handle error gracefully
+      errorHandler({
+        title: "Extension Error",
+        msg: "Failed to send data. Please try again or refresh the page.",
+      });
     }
   }
 
@@ -68,7 +74,13 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
   try {
     await chrome.tabs.sendMessage(activeTab.id, { data });
   } catch (error) {
-    console.error(`Error: communicating with content script ${error.message}`);
-    // handle error gracefully
+    console.error(
+      `Failed to communicate with the content script: ${error.message}`
+    );
+
+    errorHandler({
+      title: "Extension Error",
+      msg: "Failed to send data. Please try again or refresh the page.",
+    });
   }
 });
