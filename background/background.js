@@ -44,11 +44,9 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
     console.log("injecting content script");
   }
 
-  let data = null;
-
   if (info.menuItemId === "translate") {
     try {
-      data = await getTranslation(info.selectionText);
+      await getTranslation(info.selectionText);
     } catch (error) {
       console.error(error);
       errorHandler({
@@ -60,7 +58,10 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
 
   if (info.menuItemId === "explain") {
     try {
-      data = await getExplaination(info.selectionText);
+      const data = await getExplaination(info.selectionText);
+
+      // send data to content script
+      await chrome.tabs.sendMessage(activeTab.id, { data });
     } catch (error) {
       console.error(error);
       errorHandler({
@@ -68,19 +69,5 @@ chrome.contextMenus.onClicked.addListener(async (info) => {
         msg: "Failed to send data. Please try again or refresh the page.",
       });
     }
-  }
-
-  // send the info to content script
-  try {
-    await chrome.tabs.sendMessage(activeTab.id, { data });
-  } catch (error) {
-    console.error(
-      `Failed to communicate with the content script: ${error.message}`
-    );
-
-    errorHandler({
-      title: "Extension Error",
-      msg: "Failed to send data. Please try again or refresh the page.",
-    });
   }
 });

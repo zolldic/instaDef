@@ -12,6 +12,7 @@
     "scripting",
     "notifications"
   ],
+  "host_permissions": ["http://*/*", "https://*/*", "file://*"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
