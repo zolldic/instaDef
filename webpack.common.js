@@ -1,10 +1,8 @@
-// const path = require("path");
-// const CopyWebpackPlugin = require("copy-webpack-plugin");
-
 import path from "path";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import { fileURLToPath } from "url";
 import Dotenv from "dotenv-webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,11 +20,24 @@ const config = {
     path: path.resolve(__dirname, "dist"),
     clean: true, // Clean the output directory before emit.
   },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+    ],
+  },
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [{ from: "static" }],
+      patterns: [
+        { from: "static" },
+        { from: "content/content.css", to: "content.css" },
+        { from: "background/error.png", to: "icons/error.png" },
+      ],
     }),
     new Dotenv(),
+    new MiniCssExtractPlugin({ filename: "[name].css" }),
   ],
 };
 
