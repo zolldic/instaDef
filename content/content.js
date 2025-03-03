@@ -1,38 +1,65 @@
-// modal
-const createModal = () => {
-  // explain modal
+/**
+ * Creates a modal element and returns it as a DocumentFragment.
+ *
+ * @function createModal
+ * @returns {DocumentFragment} The modal element as a DocumentFragment.
+ */
 
-  /**
-   * this function should inject templates into the dom
-   * based on the actions (translate, explain)
-   * inside model__content--body, the response from the AI
-   */
-  const explainTemplate = `
-    <div id="customModal" class="modal">
-      <div class="modal__content">
-        <div class="modal__content--body" id="modalBody">
-        </div>
-        <div class="modal__content--footer">
-          <span id="close">&times;</span>
-        </div>
-      </div>
-    </div>
-`;
+function createModal() {
+  const TEMPLATES = {
+    explain: `
+      <div id="customModal" class="modal">
+          <div class="modal__content">
+              <div class="modal__body" id="modalBody"></div>
+              <div class="modal__footer">
+                  <span id="close" class="modal__close">&times;</span>
+              </div>
+          </div>
+      </div>`,
+  };
 
-  return document.createRange().createContextualFragment(explainTemplate);
-};
+  return document.createRange().createContextualFragment(TEMPLATES.explain);
+}
 
-// when the webpage dom load
-// add the modal to the page
-document.body.onload = () => {
+/**
+ * Opens the modal by setting its display style to "flex".
+ *
+ * @function open
+ */
+
+function open() {
+  document.getElementById("customModal").style.display = "flex"; // Show modal
+}
+
+/**
+ * Closes the modal by setting its display style to "none".
+ *
+ * @function close
+ */
+
+function close() {
+  document.getElementById("customModal").style.display = "none"; // Hide modal
+}
+
+/**
+ * Adds the modal to the page.
+ *
+ * @function injectModel
+ */
+
+function injectModel() {
   const modal = createModal();
   document.body.append(modal);
-};
+}
+
+// inject the modal on DOM load
+document.body.onload = injectModel();
 
 // listen for message from background
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // add the data to the modal
-  document.getElementById("modalBody").append(request.data);
+
+  document.getElementById("modalBody").innerHTML = request.data;
 
   // open the modal
   open();
@@ -47,11 +74,3 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     close();
   });
 });
-
-function open() {
-  document.getElementById("customModal").style.display = "flex"; // Show modal
-}
-
-function close() {
-  document.getElementById("customModal").style.display = "none"; // Hide modal
-}
