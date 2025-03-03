@@ -59,18 +59,20 @@ document.body.onload = injectModel();
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // add the data to the modal
 
-  document.getElementById("modalBody").innerHTML = request.data;
+  if (request.data) {
+    document.getElementById("modalBody").innerHTML = request.data;
 
-  // open the modal
-  open();
+    // open the modal
+    open();
 
-  // close the modal from the X button
-  document.getElementById("close").addEventListener("click", () => {
-    close();
-  });
+    // close the modal from the X button
+    document.getElementById("close").addEventListener("click", () => {
+      close();
+    });
 
-  // close the modal when click outside
-  document.getElementById("customModal").addEventListener("click", () => {
-    close();
-  });
+    // close the modal when click outside
+    document.getElementById("customModal").addEventListener("click", () => {
+      close();
+    });
+  }
 });
