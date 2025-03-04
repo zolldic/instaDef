@@ -1,17 +1,21 @@
-import getTranslation from "./translation.js";
-import getExplaination from "./explain.js";
-import { getActiveTab, errorHandler } from "./utility.js";
+import getDefintion from "./definition.js";
+import { getActiveTab, errorHandler, tokenizer } from "./utility.js";
 
 // Menus object to store the menu items
 const MENUS = {
-  TRANSLATE: "translate",
-  EXPLAIN: "explain",
+  DEFINE: "define",
 };
 
 // Error messages object
 const ERRORS = {
-  title: "Extension Error",
-  msg: "Failed to send data. Please try again or refresh the page.",
+  EXT_ERR: {
+    title: "Extension Error",
+    msg: "Failed to send data. Please try again or refresh the page.",
+  },
+  DEF_ERR: {
+    title: "Selection Error",
+    msg: "please select one word at a time",
+  },
 };
 
 /**
@@ -35,12 +39,8 @@ function setUpCommands() {
 function createContextMenu() {
   const options = [
     {
-      id: MENUS.TRANSLATE,
-      title: "Translate (%s)",
-    },
-    {
-      id: MENUS.EXPLAIN,
-      title: "Explain (%s)",
+      id: MENUS.DEFINE,
+      title: "Define (%s)",
     },
   ];
 
@@ -85,19 +85,13 @@ async function handleMenuClick(info) {
     const activeTab = await getActiveTab({ active: true, currentWindow: true });
     // Inject the content script into the active tab and handle the menu click
     if (await injectScript(activeTab)) {
-      switch (info.menuItemId) {
-        case MENUS.TRANSLATE:
-          await getTranslation(info.selectionText);
-          break;
-        case MENUS.EXPLAIN:
-          const data = await getExplaination(info.selectionText);
-          await chrome.tabs.sendMessage(activeTab.id, { data });
-          break;
-      }
+      const selection = tokenizer(info.selectionText);
+      const data = await getDefintion(selection);
+      await chrome.tabs.sendMessage(activeTab.id, { data });
     }
   } catch (error) {
     console.error("Context menu action failed:", error);
-    errorHandler(ERRORS);
+    errorHandler(ERRORS.EXT_ERR);
   }
 }
 
